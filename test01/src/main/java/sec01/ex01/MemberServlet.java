@@ -1,8 +1,11 @@
 package sec01.ex01;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -14,14 +17,14 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class SecondServlet
  */
-@WebServlet(description = "SecondServlet", urlPatterns = { "/login2" })
-public class SecondServlet extends HttpServlet {
+@WebServlet(description = "MemberServlet", urlPatterns = { "/member" })
+public class MemberServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public SecondServlet() {
+    public MemberServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -35,53 +38,42 @@ public class SecondServlet extends HttpServlet {
 
 	}
 
-	/**
-	 * @see Servlet#destroy()
-	 */
 	public void destroy() {
 		// TODO Auto-generated method stub
 	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		System.out.println("doGet 메서도 호출");
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=UTF-8");
-		Enumeration<String> enums = request.getParameterNames();
+		PrintWriter out = response.getWriter();
+		MemberDAO dao = new MemberDAO();
+		List<MemberVO> list = dao.listMembers();
 		
-		while (enums.hasMoreElements()) {
-			String name = (String) enums.nextElement();
-			String [] val = request.getParameterValues(name);
+		out.print("<html><body>");
+		out.print("<table border=1><tr align='center' bgcolor='lightgreen'>");
+		out.print("<tr style='text-align:center;'><td>아이디</td><td>비밀번호</td><td>이름</td><td>이메일</td><td>가입일</td></tr>");
+		
+		
+		for(int i=0; i < list.size();i++)
+		{
+			MemberVO vo = list.get(i);
+			String id = vo.getId();
+			String pwd = vo.getPwd();
+			String name = vo.getName();
+			String email = vo.getEmail();
+			Date joinDate = vo.getJoinData();
 			
-			for(String str : val)
-			{
-				response.getWriter().append("name : " + name + ", val :" + str + "<br> ");
-			}
+			out.print("<tr style='text-align:center;'><td>+"+ id + "</td><td>"+ pwd + "</td><td>"+ name + "</td><td>"+ email + "</td><td>"+ joinDate + "</td> </tr>");
 		}
+		
+		out.print("</table></body></html>");
+		
 		
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
-	}
-
-	protected void doHandle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-	}
-
-	
-	/**
-	 * @see HttpServlet#doTrace(HttpServletRequest, HttpServletResponse)
-	 */
-	protected void doTrace(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 	}
 
 }

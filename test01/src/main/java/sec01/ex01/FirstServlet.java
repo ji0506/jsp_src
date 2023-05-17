@@ -1,6 +1,7 @@
 package sec01.ex01;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 
 import javax.servlet.ServletConfig;
@@ -41,22 +42,21 @@ public class FirstServlet extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=UTF-8");
 		String str = request.getParameter("user_id");
-		String str2 = request.getParameter("user_pwd");
-		System.out.println("아이디 : " + str + ", 패스워드 : " + str2);
-		
+		String str2 = request.getParameter("user_pwd");		
 		String[] str3 = request.getParameterValues("subject");
 		System.out.println("아이디 : " + str + ", 패스워드 : " + str2 + " " + Arrays.toString(str3));
 
-
-		response.getWriter().append("id: " + str + " pwd: " + str2 + " check : " + Arrays.toString(str3));
-	  /*  String data = new String("");
+		PrintWriter out = response.getWriter();
+		
+		//response.getWriter().append("id: " + str + " pwd: " + str2 + " check : " + Arrays.toString(str3));
+	    String data = new String("");
         data += "<html>";
         data += "<body>";
-        data += "아이디:" + id + "<br>";
-        data += "패스워드:" + pw + "<br>";
-        data += "주소:" + adress;
+        data += "아이디:" + str + "<br>";
+        data += "패스워드:" + str2 + "<br>";
         data += "</body>";
-        data += "</html>";*/
+        data += "</html>";
+        out.print(data);	
 //		response.sendRedirect("test.jsp");
 	}
 
@@ -66,8 +66,17 @@ public class FirstServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
+		System.out.println("test post");
+		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html; charset=UTF-8");
+		String str = request.getParameter("user_id");
+		String str2 = request.getParameter("user_pwd");		
+
+		String[] str3 = request.getParameterValues("subject");
 		
-		doGet(request, response);
+		System.out.println("아이디 : " + str + ", 패스워드 : " + str2 + " " + Arrays.toString(str3));
+
+		//doGet(request, response);
 	}
 
 }
