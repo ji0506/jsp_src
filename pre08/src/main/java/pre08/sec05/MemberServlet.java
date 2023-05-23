@@ -47,7 +47,6 @@ public class MemberServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=UTF-8");
-		PrintWriter out = response.getWriter();
 		MemberDAO dao = new MemberDAO();
 		
 		String str = request.getParameter("command");
@@ -55,7 +54,7 @@ public class MemberServlet extends HttpServlet {
 		
 		if(str != null && str.equals("addMember"))
 		{
-			MemberVO vo =new MemberVO();
+			MemberVO vo = new MemberVO();
 			vo.setId(request.getParameter("id"));
 			vo.setPwd(request.getParameter("pwd"));
 			vo.setEmail(request.getParameter("email"));

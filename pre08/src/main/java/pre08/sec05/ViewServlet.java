@@ -51,8 +51,9 @@ public class ViewServlet extends HttpServlet {
 			String email = vo.getEmail();
 			Date joinDate = vo.getJoinData();
 			
-			out.print("<tr style='text-align:center;'><td>"+ id + "</td><td>"+ pwd + "</td><td>"+ name + "</td><td>"+ email + "</td><td>"+ joinDate + "</td> <td>"
-			+	"<a href='/member?command=delMember&id=" + id + "'>삭제</a></td></tr>");
+			out.print("<tr style='text-align:center;'><td>"+ id + "</td><td>"+ pwd + "</td><td>"+ name 
+			+"</td><td>"+ email + "</td><td>"+ joinDate + "</td> <td>"
+			+"<a href='/member?command=delMember&id=" + id + "'>삭제</a></td></tr>");
 		}
 		
 		out.print("</table></body></html>");

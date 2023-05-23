@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript">
+	window.onload = pageLoad;
+	function pageLoad(){
+		notShow = getCookieValue();
+		if(notShow != "true")
+		{
+			window.open("popup.html","pop","width=400, height=500px, history=no, resizable=no, status=no, scrollbars=yes,member=no");
+		}
+
+	}
+	function getCookieValue()
+	{
+		let result = "false";
+		if(document.cookie != "")
+		{
+			
+		}
+	}
+</script>
+</head>
+<body>
+
+</body>
+</html>
