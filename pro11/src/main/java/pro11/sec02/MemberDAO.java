@@ -1,8 +1,6 @@
-package pre08.sec05;
+package pro11.sec02;
 
-import java.sql.Statement;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -58,6 +56,36 @@ public class MemberDAO {
 
 		return list;
 	}
+	public List<MemberVO> listMembers(MemberVO vo) {
+
+		List<MemberVO> list = new ArrayList<>();
+
+		try {
+			conn = dataFac.getConnection();
+			String sql = "select * from t_member where name=?";
+			System.out.println(sql);
+
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, vo.getName());
+			ResultSet re = stmt.executeQuery();
+			while (re.next()) {
+				vo.setId(re.getString("id"));
+				vo.setPwd(re.getString("pw"));
+				vo.setName(re.getString("name"));
+				vo.setEmail(re.getString("email"));
+				vo.setJoinData(re.getDate("joinData"));
+				list.add(vo);
+			}
+			re.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+	
 
 	public void addMember(MemberVO vo) {
 		try {

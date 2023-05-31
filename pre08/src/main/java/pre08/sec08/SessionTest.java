@@ -1,26 +1,27 @@
-package pre08.sec01;
+package pre08.sec08;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLEncoder;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class FristServlet
+ * Servlet implementation class SessionTest
  */
-@WebServlet("/login.do")
-public class FristServlet extends HttpServlet {
+@WebServlet("/sess")
+public class SessionTest extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public FristServlet() {
+    public SessionTest() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -29,35 +30,25 @@ public class FristServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=UTF-8");
 		PrintWriter out = response.getWriter();
-		String id = request.getParameter("user_id");
-		String pwd = request.getParameter("user_pwd");
-		String address = request.getParameter("user_address");
-		String hp = request.getParameter("user_hp");		
-		String email = request.getParameter("user_email");		
+		HttpSession session = request.getSession();
+		out.print("세션 아이디 : " +session.getId() + "<br>");
+		out.print("최초 세션 생성 시각 : " + new Date(session.getCreationTime()) + "<br>");
+		out.print("최근 세션 접근 시각 : " + new Date(session.getLastAccessedTime()) + "<br>");
+		out.print("세션 유효 시간 : " + new Date(session.getMaxInactiveInterval()) + "<br>");
+		session.setMaxInactiveInterval(500);
+		out.print("세션 유효 시간 : " + new Date(session.getMaxInactiveInterval()) + "<br>");
 
+		if(session.isNew())
+		{
+			out.print("세 세션이 만들어졌습니다.");
+		}
 		
-	    String data = new String("");
-        data += "<html>";
-        data += "<body>";
-        data += "아이디:" + id + "<br>";
-        data += "패스워드:" + pwd + "<br>";
-        data += "주소:" + address + "<br>";
-        data += "hp:" + hp + "<br>";
-        data += "이메일:" + email + "<br>";
-        
-        address = URLEncoder.encode(address,"utf-8");
-		//		response.sendRedirect("/second?name=lee");
-        data += "</body>";
-        data += "</html>";
-
-        out.print(data);	
-        out.print("<a href='/second?id=" + id + "&pwd="+ pwd +"&address="+ address + "'>두번째 서블릿으로</a>");
-
-
+		session.invalidate();
+		
 	}
 
 	/**
