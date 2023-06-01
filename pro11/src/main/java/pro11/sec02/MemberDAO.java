@@ -33,7 +33,7 @@ public class MemberDAO {
 
 		try {
 			conn = dataFac.getConnection();
-			String sql = "select * from t_member";
+			String sql = "select * from t_member order by joinData asc";
 			System.out.println(sql);
 
 			stmt = conn.prepareStatement(sql);

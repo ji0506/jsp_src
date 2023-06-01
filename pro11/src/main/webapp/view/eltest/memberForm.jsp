@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-<form method="post" action="forward.jsp">
+<form method="post" action="member_action.jsp">
     <h1 style="text-align: center">회원 가입창</h1>
     <table align="center">
         <tr>
