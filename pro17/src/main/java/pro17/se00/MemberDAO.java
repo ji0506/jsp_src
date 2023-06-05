@@ -1,4 +1,4 @@
-package pro11.sec02;
+package pro17.se00;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,7 +41,7 @@ public class MemberDAO {
 			while (re.next()) {
 				MemberVO vo = new MemberVO();
 				vo.setId(re.getString("id"));
-				vo.setPwd(re.getString("pw"));
+				vo.setPwd(re.getString("pwd"));
 				vo.setName(re.getString("name"));
 				vo.setEmail(re.getString("email"));
 				vo.setJoinData(re.getDate("joinData"));
@@ -56,25 +56,25 @@ public class MemberDAO {
 
 		return list;
 	}
-	public List<MemberVO> listMembers(MemberVO vo) {
+	public MemberVO findMembers(String id) {
 
-		List<MemberVO> list = new ArrayList<>();
+		MemberVO vo = null;
 
 		try {
 			conn = dataFac.getConnection();
-			String sql = "select * from t_member where name=?";
+			String sql = "select * from t_member where id=?";
 			System.out.println(sql);
 
 			stmt = conn.prepareStatement(sql);
-			stmt.setString(1, vo.getName());
+			stmt.setString(1, id);
 			ResultSet re = stmt.executeQuery();
 			while (re.next()) {
+				vo = new MemberVO();
 				vo.setId(re.getString("id"));
-				vo.setPwd(re.getString("pw"));
+				vo.setPwd(re.getString("pwd"));
 				vo.setName(re.getString("name"));
 				vo.setEmail(re.getString("email"));
 				vo.setJoinData(re.getDate("joinData"));
-				list.add(vo);
 			}
 			re.close();
 			stmt.close();
@@ -83,7 +83,7 @@ public class MemberDAO {
 			e.printStackTrace();
 		}
 
-		return list;
+		return vo;
 	}
 	
 
@@ -91,7 +91,7 @@ public class MemberDAO {
 		try {
 			conn = dataFac.getConnection();
 
-			String sql = "insert into t_member(id,pw,name,email) values(?,?,?,?)";
+			String sql = "insert into t_member(id,pwd,name,email) values(?,?,?,?)";
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, vo.getId());
 			stmt.setString(2, vo.getPwd());
@@ -105,6 +105,31 @@ public class MemberDAO {
 			e.printStackTrace();
 		}
 	}
+	
+	public void modMember(MemberVO vo) {
+		try {
+			
+			conn = dataFac.getConnection();
+			
+			String sql = "update t_member set id = ?, pwd = ?, name= ?, email= ? where id=? ";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			
+			stmt.setString(1, vo.getId());
+			stmt.setString(2, vo.getPwd());
+			stmt.setString(3, vo.getName());
+			stmt.setString(4, vo.getEmail());
+			stmt.setString(5, vo.getId());
+
+			stmt.executeUpdate();
+			stmt.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
 
 	public void delMember(String id) {
 		try {
@@ -120,7 +145,6 @@ public class MemberDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 	
 	public boolean isExited(MemberVO vo)
@@ -130,7 +154,7 @@ public class MemberDAO {
 		boolean result = false;
 		try {
 			conn = dataFac.getConnection();
-			String sql = "select　decode(count(*),1,'true','false') as result from t_member where id=? and pw=?";
+			String sql = "select　decode(count(*),1,'true','false') as result from t_member where id=? and pwd=?";
 			System.out.println(sql);
 
 			stmt = conn.prepareStatement(sql);
