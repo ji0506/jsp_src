@@ -33,9 +33,7 @@ public class MemberConroller extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=UTF-8");
 
-		String action = request.getPathInfo();
-		
-		MemberDAO dao = new MemberDAO();
+		String action = request.getPathInfo();		
 		
 		if(action == null || "list.do".equals(action))
 		{
