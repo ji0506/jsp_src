@@ -28,6 +28,7 @@ public class ArticleVO {
 	
 	private Date writeDate;
 
+	private int rownum;
 
 
 	public void setImageFileName(String imageFileName) {

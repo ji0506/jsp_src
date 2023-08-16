@@ -66,7 +66,7 @@
 		<c:choose>
 			<c:when test="${empty memList}">
 				<tr>
-					<td colspan=5><b>등록된 회원이 없습니다.</b></td>
+					<td colspan=7><b>등록된 회원이 없습니다.</b></td>
 				</tr>
 			</c:when>
 			<c:when test="${!empty memList }">
@@ -77,8 +77,8 @@
 						<td>${mem.name}</td>
 						<td>${mem.email}</td>
 						<td>${mem.joinData}</td>
-						<td><a href="/member/modForm.do?id=${mem.id}">수정</a></td>
-						<td><a href="/member/del.do?id=${mem.id}">삭제</a></td>
+						<td><a href="${contextPath}/member/modForm.do?id=${mem.id}">수정</a></td>
+						<td><a href="${contextPath}/member/del.do?id=${mem.id}">삭제</a></td>
 					</tr>
 				</c:forEach>
 			</c:when>

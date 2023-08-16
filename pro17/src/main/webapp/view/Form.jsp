@@ -24,7 +24,7 @@
 		      }
 		  }  
 		function backtoList(obj){
-			obj.action = "/board/list.do"
+			obj.action = "${contextPath}/board/list.do"
 			obj.submit();
 		}
 	</script>
@@ -33,7 +33,7 @@
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
     <h1 style="text-align: center">새 글 쓰기</h1>
-	<form name="aricleform" method="post" action="/board/add.do" enctype="multipart/form-data">
+	<form name="aricleform" method="post" action="${contextPath}/board/add.do" enctype="multipart/form-data">
 	    <table align="center">
 	        <tr>
 	            <td align="right">글제목: </td>
@@ -53,7 +53,7 @@
 					<p>&nbsp;</p>
 				</td>
 				<td style="width: 400px;">
-					<input type="submit" value="가입하기">
+					<input type="submit" value="글쓰기">
 					<input type="button" value="목록보기" onClick="backtoList(this.form)">
 				</td>
 	        </tr>

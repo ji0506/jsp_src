@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -31,34 +32,46 @@ public class BoardDAO {
 
 	}	
 	
-	public List<ArticleVO> selectAllArticle() throws SQLException {
+	public List<ArticleVO> selectAllArticle(Map<String,Integer> pageMap) throws SQLException {
 		// TODO Auto-generated method stub
 		
 		List<ArticleVO> list = new ArrayList<ArticleVO>();
-		
+		int section = (Integer) pageMap.get("section");
+		int pageNum = (Integer) pageMap.get("pageNum");
 		
 		try {
 			conn = dataFac.getConnection();
-			String sql = "WITH RECURSIVE board AS ("
-					+ "   SELECT 1 AS LEVEL, b.* "
-					+ "      FROM t_board b WHERE b.parentNO = 0 "
-					+ "   UNION ALL "
-					+ "   SELECT level + 1 AS LEVEL, b.* "
-					+ "   FROM board l INNER JOIN t_board b ON  l.articleNo = b.parentNO"
-					+ ") "
-					+ "SELECT "
-					+ "   LEVEL, "
-					+ "   articleNO, "
-					+ "   parentNO,  "
-					+ "   CONCAT(SPACE(4*(LEVEL-1)),title) AS title, "
-					+ "   title AS oldtitle, "
-					+ "   content, "
-					+ "   writedate, "
-					+ "   id "
-					+ "FROM board "
-					+ "ORDER BY LEVEL,articleNO desc";
+			String sql = "SELECT c.* FROM ( "
+					+ "SELECT * FROM ( "
+					+ "	WITH RECURSIVE board AS ( "
+					+ "	   SELECT 1 AS LEVEL, b.*, b.articleNo AS topId "
+					+ "		FROM t_board b WHERE b.parentNO = 0"
+					+ "	   UNION ALL"
+					+ "	   SELECT LEVEL + 1 AS LEVEL, b.*, l.topId "
+					+ "	   FROM board l INNER JOIN t_board b ON  l.articleNo = b.parentNO"
+					+ "	)"
+					+ "	SELECT "
+					+ "	   LEVEL,"
+					+ "	   articleNO,"
+					+ "	   parentNO,"
+					+ "	   CONCAT(SPACE(4*(LEVEL-1)),title) AS title,"
+					+ "	   title AS oldtitle,"
+					+ "	   content,"
+					+ "	   writedate,"
+					+ "	   id,"
+					+ "	   ROW_NUMBER() over(ORDER BY topId DESC, parentNO) AS rownum "
+					+ "	FROM board "
+					+ "	ORDER BY topId DESC, parentNO"
+					+ "	) b "
+					+ "WHERE rownum BETWEEN (?-1)*100+(?-1)*10+1 AND (?-1)*100+?*10 "
+					+ ") c ";
 
 			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, section);
+			stmt.setInt(2, pageNum);
+			stmt.setInt(3, section);
+			stmt.setInt(4, pageNum);
+
 			ResultSet re = stmt.executeQuery();
 			
 			while(re.next())
@@ -71,6 +84,8 @@ public class BoardDAO {
 				vo.setContent(re.getString("content"));
 				vo.setWriteDate(re.getDate("writedate"));
 				vo.setId(re.getString("id"));
+				vo.setRownum(re.getInt("rownum"));
+
 				list.add(vo);
 			}
 			re.close();
@@ -177,9 +192,14 @@ public class BoardDAO {
 		try {
 			
 			conn = dataFac.getConnection();
-			
-			String sql = "update t_board set title = ?, content = ? ,imageFileName = ? where articleNO = ? ";
+			String imageFileName = vo.getImageFileName();
+			String sql = "update t_board  set title=?,content=?";
+			if (imageFileName != null && imageFileName.length() != 0) {
+				sql += ",imageFileName=?";
+			}
+			sql += " where articleNO=?";
 
+			
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			
 			stmt.setString(1, vo.getTitle());
@@ -196,6 +216,90 @@ public class BoardDAO {
 
 		return null;
 	}
+
+	public List<Integer> selectRemove(int articleNO) {
+		
+		
+		List<Integer> list  = new ArrayList<>();
+		try {
+			conn = dataFac.getConnection();
+			String sql = "WITH RECURSIVE board AS ("
+					+ "   SELECT b.*"
+					+ "   FROM t_board b WHERE b.articleNo = ?"
+					+ "   UNION ALL"
+					+ "   SELECT b.*"
+					+ "   FROM board l INNER JOIN t_board b ON  l.articleNo = b.parentNO"
+					+ "	) "
+					+ "SELECT articleNo FROM board	";
+			
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, articleNO);
+
+
+			ResultSet re = stmt.executeQuery();
+			
+			if(re.next())
+			{
+				int i = re.getInt(1);
+				list.add(i);
+			}
+			stmt.close();
+			conn.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return list;
+	}
+
+	public void delete(List<Integer> list) {
+	
+		try {
+			conn = dataFac.getConnection();
+			String sql = "delete from t_board where articleNo in(";
+			
+			for(int i =0; i < list.size();i++)
+				if( i == 0)
+					sql += list.get(i);
+				else
+					sql += "," + list.get(i);
+			
+			sql += ")";
+			stmt = conn.prepareStatement(sql);
+
+			stmt.executeUpdate();
+			stmt.close();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public int selectTotArticle() {
+		int i = -1;
+		try {
+			conn = dataFac.getConnection();
+
+			String sql = "select count(articleNO) from t_board";
+			stmt = conn.prepareStatement(sql);
+
+			ResultSet re = stmt.executeQuery();
+			
+			if(re.next())
+			{
+				i = re.getInt(1);
+			}
+			stmt.close();
+			conn.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return i;
+	}
+
 	
 
 }

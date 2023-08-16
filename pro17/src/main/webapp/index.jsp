@@ -3,5 +3,5 @@
 
     
 <%
-	response.sendRedirect("/member/list.do");
+	response.sendRedirect(request.getContextPath()  +"/board/list.do");
 %>
